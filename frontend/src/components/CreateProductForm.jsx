@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { PlusCircle, Upload, Loader } from "lucide-react";
 import { useProductStore } from "../stores/useProductStore";
 
-const categories = ["jeans", "t-shirts", "shoes", "glasses", "jackets", "suits", "bags"];
+const categories = ["action", "adventure", "rpg", "indie", "rhythm", "strategy", "puzzle"];
 
 const CreateProductForm = () => {
 	const [newProduct, setNewProduct] = useState({
@@ -103,7 +103,7 @@ const CreateProductForm = () => {
 
 				<div>
 					<label htmlFor='category' className='block text-sm font-medium text-gray-300'>
-						Category
+						Genre
 					</label>
 					<select
 						id='category'
