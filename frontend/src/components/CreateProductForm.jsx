@@ -9,6 +9,7 @@ const CreateProductForm = () => {
 	const [newProduct, setNewProduct] = useState({
 		name: "",
 		description: "",
+		detailedDescription: "",
 		price: "",
 		category: "",
 		image: "",
@@ -20,7 +21,7 @@ const CreateProductForm = () => {
 		e.preventDefault();
 		try {
 			await createProduct(newProduct);
-			setNewProduct({ name: "", description: "", price: "", category: "", image: "" });
+			setNewProduct({ name: "", description: "",detailedDescription: "", price: "", category: "", image: "" });
 		} catch {
 			console.log("error creating a product");
 		}
@@ -68,13 +69,29 @@ const CreateProductForm = () => {
 
 				<div>
 					<label htmlFor='description' className='block text-sm font-medium text-gray-300'>
-						Description
+						Brief description
 					</label>
 					<textarea
 						id='description'
 						name='description'
 						value={newProduct.description}
 						onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
+						rows='1'
+						className='mt-1 block w-full bg-gray-700 border border-gray-600 rounded-md shadow-sm
+						 py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 
+						 focus:border-emerald-500'
+						required
+					/>
+				</div>
+				<div>
+					<label htmlFor='description' className='block text-sm font-medium text-gray-300'>
+						Detailed description
+					</label>
+					<textarea
+						id='description'
+						name='description'
+						value={newProduct.detailedDescription}
+						onChange={(e) => setNewProduct({ ...newProduct, detailedDescription: e.target.value })}
 						rows='3'
 						className='mt-1 block w-full bg-gray-700 border border-gray-600 rounded-md shadow-sm
 						 py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 
@@ -82,7 +99,6 @@ const CreateProductForm = () => {
 						required
 					/>
 				</div>
-
 				<div>
 					<label htmlFor='price' className='block text-sm font-medium text-gray-300'>
 						Price

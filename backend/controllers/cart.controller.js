@@ -78,3 +78,18 @@ export const updateQuantity = async (req, res) => {
 		res.status(500).json({ message: "Server error", error: error.message });
 	}
 };
+export const viewDetail = async (req, res) => {
+    try {
+        const { id: productId } = req.params;
+        const product = await Product.findById(productId);
+
+        if (product) {
+            res.json(product);
+        } else {
+            res.status(404).json({ message: "Product not found" });
+        }
+    } catch (error) {
+        console.log("Error in viewDetail controller", error.message);
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+};

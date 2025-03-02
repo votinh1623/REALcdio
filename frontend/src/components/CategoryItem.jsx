@@ -18,7 +18,17 @@ const CategoryItem = ({ category }) => {
 					</div>
 				</div>
 			</Link>
-		</div>
+			<div className='flex-1 p-4'>
+                <h3 className='text-gray-900 text-2xl font-bold mb-2'>{category.name}</h3>
+                <p className='text-gray-700 text-sm'>{category.description}</p>
+                <Link
+                    to={`/product/${category.id}`}
+                    className='mt-4 inline-block bg-emerald-600 hover:bg-emerald-700 text-white py-2 px-4 rounded-md transition duration-300 ease-in-out'
+                >
+                    View Details
+                </Link>
+            </div>
+        </div>
 	);
 };
 

@@ -41,7 +41,7 @@ export const getFeaturedProducts = async (req, res) => {
 
 export const createProduct = async (req, res) => {
 	try {
-		const { name, description, price, image, category } = req.body;
+		const { name, description,detailedDescription, price, image, category } = req.body;
 
 		let cloudinaryResponse = null;
 
@@ -52,6 +52,7 @@ export const createProduct = async (req, res) => {
 		const product = await Product.create({
 			name,
 			description,
+			detailedDescription,
 			price,
 			image: cloudinaryResponse?.secure_url ? cloudinaryResponse.secure_url : "",
 			category,
@@ -142,6 +143,18 @@ export const toggleFeaturedProduct = async (req, res) => {
 		res.status(500).json({ message: "Server error", error: error.message });
 	}
 };
+export const getProductById = async (req, res) => {
+    try {
+        const product = await Product.findById(req.params.id);
+        if (!product) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+        res.json(product);
+    } catch (error) {
+        console.log("Error in getProductById controller", error.message);
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+};
 
 async function updateFeaturedProductsCache() {
 	try {
@@ -152,4 +165,4 @@ async function updateFeaturedProductsCache() {
 	} catch (error) {
 		console.log("error in update cache function");
 	}
-}
+};

@@ -1,11 +1,13 @@
 import toast from "react-hot-toast";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, Info } from "lucide-react";
 import { useUserStore } from "../stores/useUserStore";
 import { useCartStore } from "../stores/useCartStore";
+import { useNavigate } from "react-router-dom";
 
 const ProductCard = ({ product }) => {
 	const { user } = useUserStore();
 	const { addToCart } = useCartStore();
+	const navigate = useNavigate();
 	const handleAddToCart = () => {
 		if (!user) {
 			toast.error("Please login to add products to cart", { id: "login" });
@@ -15,7 +17,9 @@ const ProductCard = ({ product }) => {
 			addToCart(product);
 		}
 	};
-
+	const handleViewDetails = () => {
+        navigate(`/product/${product._id}`);
+    };
 	return (
 		<div className='flex w-full relative flex-col overflow-hidden rounded-lg border border-gray-700 shadow-lg'>
 			<div className='relative mx-3 mt-3 flex h-60 overflow-hidden rounded-xl'>
@@ -27,7 +31,9 @@ const ProductCard = ({ product }) => {
 				<h5 className='text-xl font-semibold tracking-tight text-white'>{product.name}</h5>
 				<div className='mt-2 mb-5 flex items-center justify-between'>
 					<p>
-						<span className='text-3xl font-bold text-emerald-400'>${product.price}</span>
+					<span className='text-3xl font-bold text-emerald-400'>
+                            {product.price === 0 ? "FREE" : `$${product.price}`}
+                        </span>
 					</p>
 				</div>
 				<button
@@ -38,6 +44,14 @@ const ProductCard = ({ product }) => {
 					<ShoppingCart size={22} className='mr-2' />
 					Add to cart
 				</button>
+				<button
+                    className='flex rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium center
+                     text-white hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 mt-2'
+                    onClick={handleViewDetails}
+                >
+					<Info size={22} className='mr-2' />
+                    View Details
+                </button>
 			</div>
 		</div>
 	);
