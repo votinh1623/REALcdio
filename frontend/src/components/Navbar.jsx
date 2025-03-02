@@ -1,4 +1,4 @@
-import { ShoppingCart, UserPlus, LogIn, LogOut, Lock, Bell, User, Users, HelpCircle, Home } from "lucide-react";
+import { ShoppingCart, UserPlus, LogIn, LogOut, Lock, Bell, User, Users, HelpCircle, Home, Grid, Edit } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useUserStore } from "../stores/useUserStore";
 import { useCartStore } from "../stores/useCartStore";
@@ -50,7 +50,22 @@ const Navbar = () => {
 							<Home className='inline-block mr-1 group-hover:text-emerald-400' size={20} />
 							<span className='hidden sm:inline'>Home</span>
 						</Link>
-
+						<Link
+                            to={"/all-games"}
+                            className='text-gray-300 hover:text-emerald-400 transition duration-300 ease-in-out flex items-center'
+                        >
+                            <Grid className='inline-block mr-1 group-hover:text-emerald-400' size={20} />
+                            <span className='hidden sm:inline'>Categories</span>
+                        </Link>
+						{user && (//CREATE POST
+                            <Link
+                                to={"/create-post"}
+                                className='text-gray-300 hover:text-emerald-400 transition duration-300 ease-in-out flex items-center'
+                            >
+                                <Edit className='inline-block mr-1 group-hover:text-emerald-400' size={20} />
+                                <span className='hidden sm:inline'>Create Post</span>
+                            </Link>
+                        )}
 						{user && ( //CART
 							<Link
 								to={"/cart"}
@@ -100,7 +115,7 @@ const Navbar = () => {
 								{showNotifications && (
 									<div className='absolute right-0 mt-2 w-48 bg-gray-800 text-white rounded-md shadow-lg z-50'>
 										<ul>
-											{notifications.length > 0 ? (
+											{notifications.length > 0 ? (	
 												notifications.map((notification, index) => (
 													<li key={index} className='px-4 py-2 hover:bg-gray-700'>
 														{notification}
