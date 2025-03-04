@@ -28,12 +28,6 @@ const Navbar = () => {
         setShowProfileDropdown(false); // Close profile dropdown whenever user changes
     }, [user]);
 
-	useEffect(() => {
-        // Khi user thay đổi, reset danh sách và số lượng thông báo
-        setNotifications([]);
-        setNotificationCount(0);
-    }, [user]);
-
 	const handleNotificationClick = () => {
 		setShowNotifications(!showNotifications);
 		setNotificationCount(0);
