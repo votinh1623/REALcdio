@@ -1,4 +1,4 @@
-import { ShoppingCart, UserPlus, LogIn, LogOut, Lock, Bell, User, Users, HelpCircle, Home, Grid, Edit } from "lucide-react";
+import { ShoppingCart, UserPlus, LogIn, Lock, Bell, Home } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useUserStore } from "../stores/useUserStore";
 import { useCartStore } from "../stores/useCartStore";
@@ -28,130 +28,12 @@ const Navbar = () => {
         setShowProfileDropdown(false); // Close profile dropdown whenever user changes
     }, [user]);
 
-    const handleNotificationClick = () => {
-        setShowNotifications(!showNotifications);
-        setNotificationCount(0);
-    };
+	const handleNotificationClick = () => {
+		setShowNotifications(!showNotifications);
+		setNotificationCount(0);
+	};
 
-<<<<<<< HEAD
-					<nav className='flex flex-wrap items-center gap-4'>
-						<Link
-							to={"/"}
-							className='text-gray-300 hover:text-emerald-400 transition duration-300 ease-in-out flex items-center'
-						>
-							<Home className='inline-block mr-1 group-hover:text-emerald-400' size={20} />
-							<span className='hidden sm:inline'>Home</span>
-						</Link>
-						<Link
-                            to={"/all-games"}
-                            className='text-gray-300 hover:text-emerald-400 transition duration-300 ease-in-out flex items-center'
-                        >
-                            <Grid className='inline-block mr-1 group-hover:text-emerald-400' size={20} />
-                            <span className='hidden sm:inline'>Categories</span>
-                        </Link>
-						{user && (//CREATE POST
-                            <Link
-                                to={"/create-post"}
-                                className='text-gray-300 hover:text-emerald-400 transition duration-300 ease-in-out flex items-center'
-                            >
-                                <Edit className='inline-block mr-1 group-hover:text-emerald-400' size={20} />
-                                <span className='hidden sm:inline'>Create Post</span>
-                            </Link>
-                        )}
-						{user && ( //CART
-							<Link
-								to={"/cart"}
-								className='relative group text-gray-300 hover:text-emerald-400 transition duration-300 
-							ease-in-out'
-							>
-								<ShoppingCart className='inline-block mr-1 group-hover:text-emerald-400' size={20} />
-								<span className='hidden sm:inline'>Cart</span>
-								{cart.length > 0 && (
-									<span
-										className='absolute -top-2 -left-2 bg-emerald-500 text-white rounded-full px-2 py-0.5 
-									text-xs group-hover:bg-emerald-400 transition duration-300 ease-in-out'
-									>
-										{cart.length}
-									</span>
-								)}
-							</Link>
-						)}
-						{user && ( //NOTIFICATIONS
-							<div
-								className='relative group cursor-pointer'
-								onMouseEnter={() => setShowNotifications(true)}
-								onMouseLeave={() => setShowNotifications(false)}
-								onClick={handleNotificationClick}
-							>
-								<div className='relative group text-gray-300 hover:text-emerald-400 transition duration-300 ease-in-out'>
-									<Bell className='inline-block mr-1 group-hover:text-emerald-400' size={20} />
-									<span className='hidden sm:inline'>Notifications</span>
-									{/* {cart.length > 0 && (
-									<span
-										className='absolute -top-2 -left-2 bg-emerald-500 text-white rounded-full px-2 py-0.5 
-									text-xs group-hover:bg-emerald-400 transition duration-300 ease-in-out'
-									>
-										{cart.length}
-									</span>
-								)} */
-										notificationCount > 0 && (
-											<span
-												className='absolute -top-2 -left-2 bg-emerald-500 text-white rounded-full px-2 py-0.5 
-                                        text-xs group-hover:bg-emerald-400 transition duration-300 ease-in-out'
-											>
-												{notificationCount}
-											</span>
-										)
-									}
-								</div>
-								{showNotifications && (
-									<div className='absolute right-0 mt-2 w-48 bg-gray-800 text-white rounded-md shadow-lg z-50'>
-										<ul>
-											{notifications.length > 0 ? (	
-												notifications.map((notification, index) => (
-													<li key={index} className='px-4 py-2 hover:bg-gray-700'>
-														{notification}
-													</li>
-												))
-											) : (
-												<li className='px-4 py-2 hover:bg-gray-700'>No notifications</li>
-											)}
-										</ul>
-									</div>
-								)}
-							</div>
-						)}
-						{user && (//PROFILE
-							<Link
-								to={"/profile"}
-								className='relative group text-gray-300 hover:text-emerald-400 transition duration-300 
-                            ease-in-out'
-							>
-								<User className='inline-block mr-1 group-hover:text-emerald-400' size={20} />
-								<span className='hidden sm:inline'>Profile</span>
-							</Link>
-						)}
-						{user && (//COMMUNITY
-							<Link
-								to={"/community"}
-								className='relative group text-gray-300 hover:text-emerald-400 transition duration-300 
-                            ease-in-out'
-							>
-								<Users className='inline-block mr-1 group-hover:text-emerald-400' size={20} />
-								<span className='hidden sm:inline'>Community</span>
-							</Link>
-						)}
-						{user && (//	SUPPORT
-							<Link
-								to={"/support"}
-								className='relative group text-gray-300 hover:text-emerald-400 transition duration-300 
-                            ease-in-out'
-							>
-								<HelpCircle className='inline-block mr-1 group-hover:text-emerald-400' size={20} />
-								<span className='hidden sm:inline'>Support</span>
-							</Link>
-						)}
-=======
+
     const handleProfileClick = () => {
         setShowProfileDropdown(!showProfileDropdown);
     };
@@ -227,7 +109,6 @@ const Navbar = () => {
                                 )}
                             </div>
                         )}
->>>>>>> d57773abddb21cd474f6a3fefec6964702b5b20a
 						{isAdmin && ( //DASHBOARD
                             <Link
                                 className='bg-emerald-700 hover:bg-emerald-600 text-white px-3 py-1 rounded-md font-medium
