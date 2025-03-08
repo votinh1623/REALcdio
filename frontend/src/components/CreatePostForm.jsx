@@ -4,6 +4,7 @@ import { PlusCircle, Upload, Loader } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useUserStore } from "../stores/useUserStore";
 import toast from "react-hot-toast";
+import { usePostCommunity } from "./Community/usePostCommunity";
 
 const themes = ["art", "music", "game"];
 
@@ -15,41 +16,31 @@ const CreatePostForm = () => {
         relatedGame: "",
         head: "",
         body: "",
+        image: "",
     });
-    const [loading, setLoading] = useState(false);
+    const {createPost, loading} = usePostCommunity();
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
+		e.preventDefault();
+		try {
+			await createPost(newPost);
+			setNewProduct({ thememe: "", relatedGame: "",head: "", price: "", body: "", image: "" });
+		} catch {
+			console.log("error creating a product");
+		}
+	};
 
-        if (!user) {
-            toast.error("Please login to create a post", { id: "login" });
-            return;
-        }
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+		if (file) {
+			const reader = new FileReader();
 
-        setLoading(true);
+			reader.onloadend = () => {
+				setNewPost({ ...newPost, image: reader.result });
+			};
 
-        try {
-            const response = await fetch("/api/posts", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${user.token}`,
-                },
-                body: JSON.stringify(newPost),
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || "Failed to create post");
-            }
-
-            toast.success("Post created successfully");
-            navigate("/");
-        } catch (error) {
-            toast.error(error.message);
-        } finally {
-            setLoading(false);
-        }
+			reader.readAsDataURL(file); // base64
+		}
     };
 
     return (
@@ -124,6 +115,17 @@ const CreatePostForm = () => {
                         className='mt-1 block w-full bg-gray-700 border border-gray-600 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500'
                         required
                     ></textarea>
+                </div>
+                <div className='mt-1 flex items-center'>
+                    <input type='file' id='image' className='sr-only' accept='image/*' onChange={handleImageChange} />
+                    <label
+                        htmlFor='image'
+                        className='cursor-pointer bg-gray-700 py-2 px-3 border border-gray-600 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-300 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500'
+                    >
+                        <Upload className='h-5 w-5 inline-block mr-2' />
+                        Upload Image
+                    </label>
+                    {newPost.image && <span className='ml-3 text-sm text-gray-400'>Image uploaded </span>}
                 </div>
                 <button
                     type='submit'

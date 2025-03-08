@@ -18,6 +18,7 @@ import PurchaseSuccessPage from "./pages/PurchaseSuccessPage";
 import PurchaseCancelPage from "./pages/PurchaseCancelPage";
 import CreatePostForm from "./components/CreatePostForm";
 import CommunityPage from "./pages/CommunityPage";
+import PostDetailsPage from "./pages/PostDetailsPage";
 function App() {
 	const { user, checkAuth, checkingAuth } = useUserStore();
 	const { getCartItems } = useCartStore();
@@ -63,6 +64,7 @@ function App() {
 					<Route path='/purchase-cancel' element={user ? <PurchaseCancelPage /> : <Navigate to='/login' />} />
 					<Route path='/create-post' element={user ? <CreatePostForm /> : <Navigate to='/login' />} />
 					<Route path='/community' element={user ? <CommunityPage /> : <Navigate to='/login' />} />
+					<Route path='/post/:postId' element={user ? <PostDetailsPage /> : <Navigate to='/login' />} />
 				</Routes>
 			</div>
 			<Toaster />
