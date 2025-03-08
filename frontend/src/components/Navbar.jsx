@@ -1,4 +1,4 @@
-import { ShoppingCart, UserPlus, LogIn, LogOut, Lock, Bell, User, Users, HelpCircle, Home, Grid, Edit } from "lucide-react";
+import { ShoppingCart, UserPlus, LogIn, Lock, Bell, Home } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useUserStore } from "../stores/useUserStore";
 import { useCartStore } from "../stores/useCartStore";
@@ -27,10 +27,17 @@ const Navbar = () => {
         setShowProfileDropdown(false); // Close profile dropdown whenever user changes
     }, [user]);
 
-    const handleNotificationClick = () => {
-        setShowNotifications(!showNotifications);
+	useEffect(() => {
+        // Khi user thay đổi, reset danh sách và số lượng thông báo
+        setNotifications([]);
         setNotificationCount(0);
-    };
+    }, [user]);
+
+	const handleNotificationClick = () => {
+		setShowNotifications(!showNotifications);
+		setNotificationCount(0);
+	};
+
 
     const handleProfileClick = () => {
         setShowProfileDropdown(!showProfileDropdown);
@@ -130,7 +137,8 @@ const Navbar = () => {
                         )}
                         {isAdmin && (
                             <Link
-                                className='bg-emerald-700 hover:bg-emerald-600 text-white px-3 py-1 rounded-md font-medium transition duration-300 ease-in-out flex items-center'
+                                className='bg-emerald-700 hover:bg-emerald-600 text-white px-3 py-1 rounded-md font-medium
+                                 transition duration-300 ease-in-out flex items-center'
                                 to={"/secret-dashboard"}
                             >
                                 <Lock className='inline-block mr-1' size={18} />
