@@ -12,6 +12,7 @@ import analyticsRoutes from "./routes/analytics.route.js";
 import postRoutes from "./routes/post.route.js";
 import userRoutes from "./routes/user.route.js";
 import commentRoute from "./routes/comment.route.js";
+import Game from "./models/game.model.js";
 import { connectDB } from "./lib/db.js";
 
 dotenv.config();

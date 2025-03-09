@@ -6,6 +6,7 @@ import { useUserStore } from "../stores/useUserStore";
 
 const SignUpPage = () => {
 	const [formData, setFormData] = useState({
+		fullName: "",
 		name: "",
 		email: "",
 		password: "",

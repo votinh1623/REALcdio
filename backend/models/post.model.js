@@ -8,7 +8,7 @@ const postSchema = new mongoose.Schema(
             enum: ["art", "music", "game"],
         },
         relatedGame: {
-            type: String,
+            type: mongoose.Schema.Types.ObjectId,
             ref: "Game",
             required: function () {
                 return this.theme === "game";
@@ -31,11 +31,25 @@ const postSchema = new mongoose.Schema(
             ref: "User",
             required: true,
         },
+        latestComment: {
+            type: String,
+            default: ""
+        },
     },
     {
         timestamps: true,
-	}
+    }
 );
+
+postSchema.virtual('commentsCount', {
+    ref: 'Comment',
+    localField: '_id',
+    foreignField: 'postId',
+    count: true
+});
+
+postSchema.set('toObject', { virtuals: true });
+postSchema.set('toJSON', { virtuals: true });
 
 const Post = mongoose.model("Post", postSchema);
 

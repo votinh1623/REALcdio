@@ -1,6 +1,7 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import cloudinary from "../lib/cloudinary.js";
 
 // Register a new user
 export const registerUser = async (req, res) => {
@@ -48,6 +49,7 @@ export const loginUser = async (req, res) => {
         const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
         res.status(200).json({ token, user });
+        // window.location.reload();
     } catch (error) {
         res.status(500).json({ message: "Server error", error: error.message });
     }

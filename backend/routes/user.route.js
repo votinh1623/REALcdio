@@ -1,8 +1,7 @@
 import express from "express";
-import { registerUser, loginUser, getUserProfile } from "../controllers/user.controller.js";
+import { registerUser, loginUser, getUserProfile} from "../controllers/user.controller.js";
 import { protectRoute } from "../middleware/auth.middleware.js";
-
-const router = express.Router();
+const router = express.Router()
 
 // Route to register a new user
 router.post("/register", registerUser);

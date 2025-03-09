@@ -3,9 +3,10 @@ import bcrypt from "bcryptjs";
 
 const userSchema = new mongoose.Schema(
 	{
+		
 		name: {
 			type: String,
-			required: [true, "Name is required"],
+			required: [true, "Username is required"],
 		},
 		email: {
 			type: String,
@@ -35,6 +36,10 @@ const userSchema = new mongoose.Schema(
 			type: String,
 			enum: ["customer", "admin"],
 			default: "customer",
+		},
+		pfp: {
+			type: String,
+			default: "/default.webp", // Default profile picture
 		},
 	},
 	{

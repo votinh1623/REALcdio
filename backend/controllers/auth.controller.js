@@ -172,15 +172,38 @@ export const changePassword = async (req, res) => {
 export const updateProfile = async (req, res) => {
   try {
     const { name } = req.body;
+	let pfpUrl = req.user.pfp;
     if (!name) {
       return res.status(400).json({ message: "Name is required" });
     }
+	if (req.files && req.files.pfp) {
+		const result = await cloudinary.uploader.upload(req.files.pfp.tempFilePath, {
+		  folder: "profile_pictures",
+		});
+		pfpUrl = result.secure_url;
+	  }
     const updatedUser = await User.findByIdAndUpdate(
       req.user._id,
-      { name },
+      { name, pfp: pfpUrl },
       { new: true }
     ).select("-password");
     res.json({ message: "Profile updated successfully", user: updatedUser });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+export const updateUserPfp = async (req, res) => {
+  try {
+    const userId = req.user._id; // Assuming you have user ID from authentication middleware
+    const profilePicture = req.file; // Multer stores the file info in req.file
+
+    if (!profilePicture) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+
+    // Update the user's profile picture URL in the database
+    const user = await User.findByIdAndUpdate(userId, { pfp: profilePicture.path }, { new: true });
+    res.status(200).json(user);
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }

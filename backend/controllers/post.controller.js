@@ -1,4 +1,5 @@
 import Post from "../models/post.model.js";
+import Game from "../models/game.model.js"; // Import the Game model
 import cloudinary from "../lib/cloudinary.js";
 
 // Create a new post
@@ -21,7 +22,7 @@ export const createPost = async (req, res) => {
         };
 
         if (theme === "game" && relatedGame) {
-            newPostData.relatedGame = relatedGame;
+            newPostData.relatedGame = mongoose.Types.ObjectId(relatedGame);
         }
 
         const newPost = await Post.create(newPostData);
@@ -36,7 +37,10 @@ export const createPost = async (req, res) => {
 // Get all posts
 export const getAllPosts = async (req, res) => {
     try {
-        const posts = await Post.find().populate("userId", "username");
+        const posts = await Post.find()
+            .populate("userId", "name")
+            .populate("relatedGame", "gameName")
+            .populate({ path: 'commentsCount' });
         res.status(200).json(posts);
     } catch (error) {
         console.error("Error in getAllPosts controller:", error.message);
@@ -47,7 +51,7 @@ export const getAllPosts = async (req, res) => {
 // Get a single post by ID
 export const getPostById = async (req, res) => {
     try {
-        const post = await Post.findById(req.params.id).populate("userId", "username").populate("relatedGame", "name");
+        const post = await Post.findById(req.params.id).populate("userId", "name").populate("relatedGame", "gameName");
         if (!post) {
             return res.status(404).json({ message: "Post not found" });
         }

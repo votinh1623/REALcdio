@@ -1,8 +1,9 @@
-import { ShoppingCart, UserPlus, LogIn, Lock, Bell, Home } from "lucide-react";
+import { ShoppingCart, UserPlus, LogIn, Lock, Bell, Home, Grid, Edit, Users } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useUserStore } from "../stores/useUserStore";
 import { useCartStore } from "../stores/useCartStore";
 import { useState, useEffect } from "react";
+import axios from "../lib/axios";
 
 const Navbar = () => {
     const [showNotifications, setShowNotifications] = useState(false);
@@ -32,6 +33,22 @@ const Navbar = () => {
         setNotifications([]);
         setNotificationCount(0);
     }, [user]);
+    // useEffect(() => {
+    //     const fetchUserProfile = async () => {
+    //         try {
+    //             const response = await axios.get("/auth/profile", {
+    //                 withCredentials: true,
+    //             });
+    //             setUser(response.data);
+    //         } catch (err) {
+    //             console.error("Failed to fetch user profile:", err);
+    //         }
+    //     };
+
+    //     if (!user) {
+    //         fetchUserProfile();
+    //     }
+    // }, [user, setUser]);
 
 	const handleNotificationClick = () => {
 		setShowNotifications(!showNotifications);
@@ -66,15 +83,7 @@ const Navbar = () => {
                             <Grid className='inline-block mr-1 group-hover:text-emerald-400' size={20} />
                             <span className='hidden sm:inline'>Categories</span>
                         </Link>
-                        {user && (
-                            <Link
-                                to={"/create-post"}
-                                className='text-gray-300 hover:text-emerald-400 transition duration-300 ease-in-out flex items-center'
-                            >
-                                <Edit className='inline-block mr-1 group-hover:text-emerald-400' size={20} />
-                                <span className='hidden sm:inline'>Create Post</span>
-                            </Link>
-                        )}
+                       
                         {user && (
                             <Link
                                 to={"/cart"}
@@ -152,9 +161,9 @@ const Navbar = () => {
                                     onClick={handleProfileClick}
                                 >
                                     <img
-                                        src='https://th.bing.com/th/id/OIP.uVOJ8OQCf2mwzP60bPN8cgAAAA?rs=1&pid=ImgDetMain'
+                                        src={user.pfp}
                                         alt='Profile'
-                                        className='inline-block w-8 h-8 rounded-full'
+                                        className='inline-block w-8 h-8 rounded-full object-cover'
                                     />
                                 </button>
                                 {showProfileDropdown && (
