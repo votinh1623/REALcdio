@@ -41,6 +41,9 @@ const userSchema = new mongoose.Schema(
 			type: String,
 			default: "/default.webp", // Default profile picture
 		},
+		lastOnline: { 
+			type: Date, default: Date.now,
+		},
 	},
 	{
 		timestamps: true,

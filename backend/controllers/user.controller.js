@@ -67,3 +67,61 @@ export const getUserProfile = async (req, res) => {
         res.status(500).json({ message: "Server error", error: error.message });
     }
 };
+export const getUserProfileById = async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id).select("name pfp lastOnline");
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        res.status(200).json(user);
+    } catch (error) {
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+};
+
+// export const getUserPostCount = async (req, res) => {
+//     try {
+//         const userId = req.params.id; // ✅ Use userId properly
+//         if (!userId) {
+//             return res.status(400).json({ message: "User ID is required" });
+//         }
+
+//         // Count total posts by the user
+//         const postCount = await Post.countDocuments({ userId });
+
+//         res.status(200).json({ postCount });
+//     } catch (error) {
+//         console.error("Error fetching post count:", error.message);
+//         res.status(500).json({ message: "Server error", error: error.message });
+//     }
+// };
+export const getUserPostCount = async (req, res) => {
+    try {
+        const { id } = req.params;
+        if (!id) {
+            return res.status(400).json({ message: "User ID is required" });
+        }
+
+        const postCount = await Post.countDocuments({ userId: id });
+
+        res.status(200).json({ postCount });
+    } catch (error) {
+        console.error("Error fetching post count:", error.message);
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+};
+export const getUserCommentCount = async (req, res) => {
+    try {
+        const { id } = req.params;
+        if (!id) {
+            return res.status(400).json({ message: "User ID is required" });
+        }
+
+        const commentCount = await Comment.countDocuments({ userId: id });
+
+        res.status(200).json({ commentCount });
+    } catch (error) {
+        console.error("Error fetching comment count:", error.message);
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+};

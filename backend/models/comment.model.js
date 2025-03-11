@@ -16,6 +16,22 @@ const commentSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        like: {
+            type: Number,
+            default: 0,
+        },
+        dislike: {
+            type: Number,
+            default: 0,
+        },
+        likes: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+        }],
+        dislikes: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+        }]
     },
     {
         timestamps: true,

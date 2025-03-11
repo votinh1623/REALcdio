@@ -120,17 +120,21 @@ export const usePostCommunity = create((set) => ({
             toast.error(error.response.data.error || "Failed to fetch comments");
         }
     },
-    deleteComment: async (commentId) => {
+    deleteComment: async (commentId, token) => {
         set({ loading: true });
         try {
-            await axios.delete(`/comments/${commentId}`);
+            await axios.delete(`/comments/${commentId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
             set((prevState) => ({
                 comments: prevState.comments.filter((comment) => comment._id !== commentId),
                 loading: false,
             }));
             toast.success("Comment deleted successfully");
         } catch (error) {
-            toast.error(error.response.data.error || "Failed to delete comment");
+            toast.error(error.response?.data?.message || "Failed to delete comment");
             set({ loading: false });
         }
     },
@@ -142,6 +146,30 @@ export const usePostCommunity = create((set) => ({
         } catch (error) {
             toast.error(error.response.data.error || "Failed to fetch comments");
             set({ loading: false });
+        }
+    },
+    likeComment: async (commentId) => {
+        try {
+            const response = await axios.post(`/comments/${commentId}/like`);
+            set((prevState) => ({
+                comments: prevState.comments.map((comment) =>
+                    comment._id === commentId ? response.data : comment
+                ),
+            }));
+        } catch (error) {
+            toast.error(error.response.data.error || "Failed to like comment");
+        }
+    },
+    dislikeComment: async (commentId) => {
+        try {
+            const response = await axios.post(`/comments/${commentId}/dislike`);
+            set((prevState) => ({
+                comments: prevState.comments.map((comment) =>
+                    comment._id === commentId ? response.data : comment
+                ),
+            }));
+        } catch (error) {
+            toast.error(error.response.data.error || "Failed to dislike comment");
         }
     },
     // refreshData: async () => {

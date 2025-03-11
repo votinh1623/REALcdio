@@ -77,6 +77,8 @@ export const login = async (req, res) => {
 				name: user.name,
 				email: user.email,
 				role: user.role,
+				lastOnline: user.lastOnline,
+				pfp: user.pfp,
 			});
 		} else {
 			res.status(400).json({ message: "Invalid email or password" });
@@ -90,11 +92,14 @@ export const login = async (req, res) => {
 export const logout = async (req, res) => {
 	try {
 		const refreshToken = req.cookies.refreshToken;
+		
 		if (refreshToken) {
 			const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
 			await redis.del(`refresh_token:${decoded.userId}`);
 		}
-
+		if (req.user) {
+            await User.findByIdAndUpdate(req.user._id, { lastOnline: new Date() }); 
+        }
 		res.clearCookie("accessToken");
 		res.clearCookie("refreshToken");
 		res.json({ message: "Logged out successfully" });

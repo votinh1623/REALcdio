@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { formatDistanceToNow } from "date-fns";
+
 import axios from "../lib/axios"; // Ensure this path points to your configured axios instance
+import { id } from "date-fns/locale";
 
 const ProfilePage = () => {
   const [user, setUser] = useState(null);
@@ -9,6 +12,7 @@ const ProfilePage = () => {
   const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [showChangePassword, setShowChangePassword] = useState(false);
+  const [lastOnline, setLastOnline] = useState("");
 
   // State for change password form
   const [currentPassword, setCurrentPassword] = useState("");
@@ -16,24 +20,41 @@ const ProfilePage = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordMessage, setPasswordMessage] = useState("");
   const [updateMessage, setUpdateMessage] = useState("");
+  const [postCount, setPostCount] = useState(0);
+  const [commentCount, setCommentCount] = useState(0);
 
   useEffect(() => {
     const fetchUserProfile = async () => {
-      try {
-        const response = await axios.get("/auth/profile", {
-          withCredentials: true,
-        });
-        setUser(response.data);
-        setUsername(response.data.name);
-      } catch (err) {
-        setError(err.response?.data?.message || err.message);
-      } finally {
-        setIsLoading(false);
-      }
+        try {
+            const response = await axios.get("/auth/profile", { withCredentials: true });
+            setUser(response.data);
+            setUsername(response.data.name);
+            const userId = response.data._id;
+
+            if (response.data.lastOnline) {
+                const timeAgo = formatDistanceToNow(new Date(response.data.lastOnline), { addSuffix: true });
+                setLastOnline(timeAgo.includes("less than a minute") ? "Online" : timeAgo);
+            }
+
+            if (userId) {
+                const [postCountResponse, commentCountResponse] = await Promise.all([
+                    axios.get(`/user/${userId}/post-count`, { withCredentials: true }),
+                    axios.get(`/user/${userId}/comment-count`, { withCredentials: true }),
+                ]);
+
+                setPostCount(postCountResponse.data.postCount || 0);
+                setCommentCount(commentCountResponse.data.commentCount || 0);
+            }
+        } catch (err) {
+            setError(err.response?.data?.message || err.message);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     fetchUserProfile();
-  }, []);
+}, []);
+
 
   // Handler for updating the profile (username only)
   const handleProfileUpdate = async (e) => {
@@ -88,7 +109,7 @@ const ProfilePage = () => {
     >
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         {/* Profile Information */}
-        <div className="bg-gray-800 p-6 rounded-lg mb-8 flex flex-col sm:flex-row">
+        <div className="bg-gray-800 p-6 rounded-lg mb-8 flex flex-col sm:flex-row items-center">
           <div className="sm:w-1/2">
             <h1 className="text-center text-5xl sm:text-6xl font-bold text-white-400 mb-4">
               User Profile
@@ -146,14 +167,43 @@ const ProfilePage = () => {
               )}
             </form>
           </div>
-          <div className="sm:w-1/2 flex justify-center items-center">
+
+          {/* Profile Picture and Activity Status */}
+          <div className="sm:w-1/2 flex flex-col items-center">
+            {/* Profile Picture */}
             <img
-              className="rounded-full w-80 h-80 object-cover"
+              className="rounded-full w-64 h-64 object-cover mb-4"
               src={user.pfp}
               alt="User Profile Picture"
             />
+
+            {/* Activity Status Row */}
+            <div className="w-2/3 flex justify-center bg-gray-700 p-4 rounded-lg shadow-lg text-white text-sm">
+              <div className="text-center mx-4">
+                <p className="text-md font-semibold text-emerald-400">{postCount}</p>
+                <p className="text-xs text-gray-300">Posts</p>
+              </div>
+              <div className="text-center mx-4">
+                <p className="text-md font-semibold text-emerald-400">{commentCount}</p>
+                <p className="text-xs text-gray-300">Comments</p>
+              </div>
+              <div className="text-center mx-4 flex items-center">
+                {lastOnline === "Online" ? (
+                  <>
+                    <span className="w-3 h-3 bg-green-500 rounded-full mr-1 animate-pulse"></span>
+                    <p className="text-md font-semibold text-green-400">Online</p>
+                  </>
+                ) : (
+                  <div>
+                    <p className="text-xs text-gray-300">Last online</p>
+                    <p className="text-md font-semibold text-gray-400">{lastOnline || "Just now"}</p>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
+
 
         {/* Change Password Form */}
         <div className="bg-gray-800 p-6 rounded-lg">

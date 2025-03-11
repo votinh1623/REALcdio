@@ -10,6 +10,7 @@ const CommunityPage = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [primarySortOption, setPrimarySortOption] = useState("date");
     const [secondarySortOption, setSecondarySortOption] = useState("newest");
+    const [sortByMine, setSortByMine] = useState(false);
     const postsPerPage = 5;
 
     useEffect(() => {
@@ -71,11 +72,15 @@ const CommunityPage = () => {
         return 0;
     });
 
-    const filteredPosts = sortedPosts.filter(post =>
-        post.head.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        post.theme.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (post.relatedGame && post.relatedGame.toLowerCase().includes(searchTerm.toLowerCase()))
-    );
+    const filteredPosts = sortedPosts.filter(post => {
+        const matchesSearch = post.head.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            post.theme.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (post.relatedGame && post.relatedGame.toLowerCase().includes(searchTerm.toLowerCase()));
+
+        const matchesMine = !sortByMine || (user && post.userId._id === user._id);
+
+        return matchesSearch && matchesMine;
+    });
 
     const indexOfLastPost = currentPage * postsPerPage;
     const indexOfFirstPost = indexOfLastPost - postsPerPage;
@@ -98,8 +103,8 @@ const CommunityPage = () => {
     }
 
     return (
-        <div className='container mx-auto p-4'>
-            <div className='mb-4 ml-12 mr-12'>
+        <div className='container mx-auto p-4 max-w-full sm:p-6'>
+            <div className='mb-4 sm:ml-12 sm:mr-12 ml-4 mr-4'>
                 <div className='flex flex-wrap items-center justify-between'>
                     <h1 className='text-5xl font-bold mb-4'>Welcome to our community!</h1>
                     <div className='flex items-center space-x-2'>
@@ -142,14 +147,23 @@ const CommunityPage = () => {
             <div className='bg-gray-900 p-6 rounded-lg shadow-lg'>
                 <div className='flex justify-between items-center mb-4 ml-24 mr-24 border border-emerald-400 p-4 rounded-lg'>
                     <h1 className='text-3xl font-bold ml-8'>Community Posts</h1>
-                    
+
                     {user && (
-                        <Link
-                            to={"/create-post"}
-                            className='mr-8 bg-blue-500 text-white py-2 px-4 rounded-md flex items-center transition duration-300 ease-in-out'
-                        >
-                            Create Post
-                        </Link>
+                        <div className="flex space-x-4">
+                            <Link
+                                to={"/create-post"}
+                                className='mr-8 bg-blue-500 text-white py-2 px-4 rounded-md flex items-center transition duration-300 ease-in-out'
+                            >
+                                Create Post
+                            </Link>
+                            <button
+                                onClick={() => setSortByMine(!sortByMine)}
+                                className={`mr-8 py-2 px-4 rounded-md flex items-center transition duration-300 ease-in-out ${sortByMine ? "bg-green-500" : "bg-gray-600"
+                                    } text-white`}
+                            >
+                                {sortByMine ? "Show All Posts" : "My posts"}
+                            </button>
+                        </div>
                     )}
                 </div>
                 {filteredPosts.length === 0 ? (
@@ -159,21 +173,23 @@ const CommunityPage = () => {
                         <div className='grid grid-cols-1 gap-2 ml-24 mr-24 mt-8'>
                             {currentPosts.map((post) => (
                                 <Link to={`/post/${post._id}`} key={post._id} className='bg-gray-800 p-4 rounded-lg shadow-md hover:bg-gray-700 transition duration-300 ease-in-out border border-yellow-800 flex justify-between items-center'>
-                                <div>
-                                    {post.img && <img src={post.img} alt={post.head} className='mb-2 rounded' />}
-                                    <h2 className='text-xl font-semibold mb-2'>{post.head}</h2>
-                                    <p className='text-gray-500 text-sm'>Theme: {post.theme}</p>
-                                    <p className='text-gray-500 text-sm'>By: {post.userId.name}</p>
-                                    {post.relatedGame && <p className='text-gray-500 text-sm'>Related Game: {post.relatedGame}</p>}
-                                    <p className='text-gray-500 text-sm'>Comments: {post.commentsCount}</p>
-                                </div>
-                                <div className='text-right mr-4'>
-                                    <p className='text-gray-400 text-sm mb-2'>Created on: {new Date(post.createdAt).toLocaleDateString()}</p>
-                                    {post.latestComment && (
-                                        <p className='text-gray-400 text-sm'>Latest comment: {post.latestComment}</p>
-                                    )}
-                                </div>
-                            </Link>
+                                    <div>
+                                        {post.img && <img src={post.img} alt={post.head} className='mb-2 rounded' />}
+                                        <h2 className='text-xl font-semibold mb-2'>{post.head}</h2>
+                                        <p className='text-gray-500 text-sm'>Theme: {post.theme}</p>
+                                        <p className='text-gray-500 text-sm'>By: {post.userId.name}</p>
+                                        {post.relatedGame && <p className='text-gray-500 text-sm'>Related Game: {post.relatedGame}</p>}
+                                        <p className='text-gray-500 text-sm'>Comments: {post.commentsCount}</p>
+                                    </div>
+                                    <div className='text-right mr-4'>
+                                        <p className='text-gray-400 text-sm mb-2'>Created on: {new Date(post.createdAt).toLocaleDateString()}</p>
+                                        {post.latestComment ? (
+                                            <p className="text-gray-400 text-sm">Latest comment: {post.latestComment}</p>
+                                        ) : (
+                                            <p className="text-gray-500 text-sm">No comments yet</p>
+                                        )}
+                                    </div>
+                                </Link>
                             ))}
                         </div>
                         <div className='flex justify-between items-center mt-4 ml-24 mr-24'>

@@ -16,6 +16,7 @@ export const protectRoute = async (req, res, next) => {
 			if (!user) {
 				return res.status(401).json({ message: "User not found" });
 			}
+			await User.findByIdAndUpdate(user._id, { lastOnline: new Date() });
 
 			req.user = user;
 
