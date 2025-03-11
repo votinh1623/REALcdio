@@ -42,6 +42,8 @@ const CommunityPage = () => {
             setSecondarySortOption("asc");
         } else if (e.target.value === "comments") {
             setSecondarySortOption("most");
+        }else if (e.target.value === "likes") {
+            setSecondarySortOption("most");
         }
     };
 
@@ -68,6 +70,9 @@ const CommunityPage = () => {
             } else if (secondarySortOption === "least") {
                 return a.commentsCount - b.commentsCount;
             }
+        }
+        else if (primarySortOption === "likes") {
+            return secondarySortOption === "most" ? (b.likes?.length || 0) - (a.likes?.length || 0) : (a.likes?.length || 0) - (b.likes?.length || 0);
         }
         return 0;
     });
@@ -113,6 +118,7 @@ const CommunityPage = () => {
                             <option value="date">Date</option>
                             <option value="alphabet">Alphabet</option>
                             <option value="comments">Comment</option>
+                            <option value="likes">Likes</option>
                         </select>
                         <select id="secondary-sort-posts" value={secondarySortOption} onChange={handleSecondarySortChange} className='text-lg font-bold text-emerald-400 bg-gray-800 border border-emerald-400 p-1 rounded-lg'>
                             {primarySortOption === "date" && (
@@ -128,6 +134,12 @@ const CommunityPage = () => {
                                 </>
                             )}
                             {primarySortOption === "comments" && (
+                                <>
+                                    <option value="most">Most</option>
+                                    <option value="least">Least</option>
+                                </>
+                            )}
+                            {primarySortOption === "likes" && (
                                 <>
                                     <option value="most">Most</option>
                                     <option value="least">Least</option>

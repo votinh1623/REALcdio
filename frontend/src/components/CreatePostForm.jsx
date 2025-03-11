@@ -24,7 +24,7 @@ const CreatePostForm = () => {
 		e.preventDefault();
 		try {
 			await createPost(newPost);
-			setNewProduct({ thememe: "", relatedGame: "",head: "", price: "", body: "", image: "" });
+			setNewPost({ theme: "", relatedGame: "",head: "", body: "", image: "" });
 		} catch {
 			console.log("error creating a product");
 		}

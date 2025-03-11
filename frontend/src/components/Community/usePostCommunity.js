@@ -189,4 +189,27 @@ export const usePostCommunity = create((set) => ({
     //         toast.error("Failed to refresh data");
     //     }
     // },
+     likePost : async (postId, token) => {
+        try {
+            await axios.post(`/posts/${postId}/like`, {}, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            toast.success("Liked post!");
+        } catch (error) {
+            toast.error("Failed to like post");
+            console.error(error);
+        }
+    },
+    
+    dislikePost : async (postId, token) => {
+        try {
+            await axios.post(`/posts/${postId}/dislike`, {}, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            toast.success("Disliked post!");
+        } catch (error) {
+            toast.error("Failed to dislike post");
+            console.error(error);
+        }
+    },
 }));

@@ -16,6 +16,8 @@ const PostDetailsPage = () => {
     const navigate = useNavigate();
     const [selectedUserId, setSelectedUserId] = useState(null);
     const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
+    const { likePost, dislikePost } = usePostCommunity();
+
     useEffect(() => {
         //checkAuth();
         fetchPostById(postId);
@@ -100,6 +102,31 @@ const PostDetailsPage = () => {
         );
 
     };
+    const handleLikePost = async () => {
+        if (!user) {
+            toast.error("You must be logged in to like posts.");
+            return;
+        }
+        try {
+            await likePost(postId, user.token);
+            fetchPostById(postId); // Refresh post data
+        } catch (error) {
+            console.error("Failed to like post:", error);
+        }
+    };
+    
+    const handleDislikePost = async () => {
+        if (!user) {
+            toast.error("You must be logged in to dislike posts.");
+            return;
+        }
+        try {
+            await dislikePost(postId, user.token);
+            fetchPostById(postId); // Refresh post data
+        } catch (error) {
+            console.error("Failed to dislike post:", error);
+        }
+    };
     return (
         <div className='min-h-screen'>
             <div className='max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-16 max-w-full'>
@@ -118,6 +145,23 @@ const PostDetailsPage = () => {
                 <div className='text-xl font-bold text-emerald-500 mb-4'>
                     Description:
                 </div>
+                <div className="flex items-center space-x-4 mt-4">
+    <button
+        onClick={handleLikePost}
+        className="flex items-center space-x-2 text-green-500 hover:text-green-400"
+    >
+        <ThumbsUp />
+        <span>{post.likes?.length || 0}</span>
+    </button>
+
+    <button
+        onClick={handleDislikePost}
+        className="flex items-center space-x-2 text-red-500 hover:text-red-400"
+    >
+        <ThumbsDown />
+        <span>{post.dislikes?.length || 0}</span>
+    </button>
+</div>
                 <p className='text-lg text-gray-300 whitespace-pre-line'>{post.body}</p>
                 {user && user._id === post.userId._id && (
                     <div className='mt-8'>

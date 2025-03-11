@@ -1,5 +1,5 @@
 import Post from "../models/post.model.js";
-import Game from "../models/game.model.js"; // Import the Game model
+// import Game from "../models/game.model.js"; // Import the Game model
 import cloudinary from "../lib/cloudinary.js";
 
 // Create a new post
@@ -137,6 +137,57 @@ export const getUserPostCount = async (req, res) => {
         res.status(200).json({ postCount });
     } catch (error) {
         console.error("Error fetching post count:", error.message);
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+};
+export const likePost = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const userId = req.user._id;
+
+        const post = await Post.findById(id);
+        if (!post) {
+            return res.status(404).json({ message: "Post not found" });
+        }
+
+        // Remove dislike if user previously disliked
+        post.dislikes = post.dislikes.filter((uid) => uid.toString() !== userId.toString());
+
+        // Check if user already liked
+        if (!post.likes.includes(userId)) {
+            post.likes.push(userId);
+        }
+
+        await post.save();
+        res.json({ message: "Post liked", post });
+    } catch (error) {
+        console.error("Error in likePost:", error.message);
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+};
+
+export const dislikePost = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const userId = req.user._id;
+
+        const post = await Post.findById(id);
+        if (!post) {
+            return res.status(404).json({ message: "Post not found" });
+        }
+
+        // Remove like if user previously liked
+        post.likes = post.likes.filter((uid) => uid.toString() !== userId.toString());
+
+        // Check if user already disliked
+        if (!post.dislikes.includes(userId)) {
+            post.dislikes.push(userId);
+        }
+
+        await post.save();
+        res.json({ message: "Post disliked", post });
+    } catch (error) {
+        console.error("Error in dislikePost:", error.message);
         res.status(500).json({ message: "Server error", error: error.message });
     }
 };
