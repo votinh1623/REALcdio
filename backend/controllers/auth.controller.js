@@ -197,19 +197,4 @@ export const updateProfile = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
-export const updateUserPfp = async (req, res) => {
-  try {
-    const userId = req.user._id; // Assuming you have user ID from authentication middleware
-    const profilePicture = req.file; // Multer stores the file info in req.file
-
-    if (!profilePicture) {
-      return res.status(400).json({ message: "No file uploaded" });
-    }
-
-    // Update the user's profile picture URL in the database
-    const user = await User.findByIdAndUpdate(userId, { pfp: profilePicture.path }, { new: true });
-    res.status(200).json(user);
-  } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
-  }
-};
+// 

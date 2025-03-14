@@ -47,7 +47,6 @@ connectDB().then(() => {
         console.log("Server is running on http://localhost:" + PORT);
     });
 });
-
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/cart", cartRoutes);

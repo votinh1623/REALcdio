@@ -69,11 +69,11 @@ function App() {
 					<Route path='/purchase-cancel' element={user ? <PurchaseCancelPage /> : <Navigate to='/login' />} />
 
 					<Route path='/create-post' element={user ? <CreatePostForm /> : <Navigate to='/login' />} />
-					<Route path='/community' element={user ? <CommunityPage /> : <Navigate to='/login' />} />
+					<Route path='/community' element={<CommunityPage />} />
 
 					<Route path='/profile' element={user ? <ProfilePage /> : <Navigate to='/login' />} />
 
-					<Route path='/post/:postId' element={user ? <PostDetailsPage /> : <Navigate to='/login' />} />
+					<Route path='/post/:postId' element={<PostDetailsPage />} />
 				</Routes>
 			</div>
 			<Toaster />

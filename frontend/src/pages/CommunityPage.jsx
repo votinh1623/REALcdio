@@ -16,11 +16,7 @@ const CommunityPage = () => {
     useEffect(() => {
         const fetchPosts = async () => {
             try {
-                const response = await fetch("/api/posts", {
-                    headers: {
-                        Authorization: `Bearer ${user.token}`,
-                    },
-                });
+                const response = await fetch("/api/posts");
                 const data = await response.json();
                 setPosts(data);
             } catch (error) {
@@ -31,7 +27,7 @@ const CommunityPage = () => {
         };
 
         fetchPosts();
-    }, [user]);
+    }, []);
 
     const handlePrimarySortChange = (e) => {
         setPrimarySortOption(e.target.value);

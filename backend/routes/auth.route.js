@@ -1,5 +1,5 @@
 import express from "express";
-import { login, logout, signup, refreshToken, getProfile, changePassword, updateProfile, updateUserPfp } from "../controllers/auth.controller.js";
+import { login, logout, signup, refreshToken, getProfile, changePassword, updateProfile } from "../controllers/auth.controller.js";
 import { protectRoute } from "../middleware/auth.middleware.js";
 import multer from "multer";
 

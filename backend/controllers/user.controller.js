@@ -125,3 +125,46 @@ export const getUserCommentCount = async (req, res) => {
         res.status(500).json({ message: "Server error", error: error.message });
     }
 };
+export const updateUserPfp = async (req, res) => {
+    try {
+        const { pfp } = req.body; // Base64 encoded image
+        const userId = req.user._id;
+
+        if (!userId) {
+            return res.status(401).json({ message: "Unauthorized: No user ID found" });
+        }
+
+        if (!pfp) {
+            return res.status(400).json({ message: "No image provided" });
+        }
+
+        // Upload image to Cloudinary
+        const cloudinaryResponse = await cloudinary.uploader.upload(pfp, {
+            folder: "pfp",
+            resource_type: "image"
+        });
+
+        if (!cloudinaryResponse.secure_url) {
+            return res.status(500).json({ message: "Failed to upload image to Cloudinary" });
+        }
+
+        // Update user profile picture
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            { pfp: cloudinaryResponse.secure_url },
+            { new: true }
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.status(200).json({
+            message: "Profile picture updated successfully",
+            pfp: updatedUser.pfp
+        });
+    } catch (error) {
+        console.error("Error updating profile picture:", error.message);
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+};

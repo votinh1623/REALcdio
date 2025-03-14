@@ -98,7 +98,7 @@ const Navbar = () => {
             <div className='container mx-auto px-4 py-3'>
                 <div className='flex flex-wrap justify-between items-center'>
                     <Link to='/' className='text-2xl font-bold text-emerald-400 items-center space-x-2 flex'>
-                        CHO TOAN
+                       GameVerse
                     </Link>
 
                     <nav className='flex flex-wrap items-center gap-4'>
@@ -176,7 +176,14 @@ const Navbar = () => {
                              )}
                          </div>
                         )}
-                        {user && (
+                         <Link
+                                to={"/community"}
+                                className='relative group text-gray-300 hover:text-emerald-400 transition duration-300 ease-in-out'
+                            >
+                                <Users className='inline-block mr-1 group-hover:text-emerald-400' size={20} />
+                                <span className='hidden sm:inline'>Community</span>
+                            </Link>
+                        {/* {user && (
                             <Link
                                 to={"/community"}
                                 className='relative group text-gray-300 hover:text-emerald-400 transition duration-300 ease-in-out'
@@ -184,7 +191,7 @@ const Navbar = () => {
                                 <Users className='inline-block mr-1 group-hover:text-emerald-400' size={20} />
                                 <span className='hidden sm:inline'>Community</span>
                             </Link>
-                        )}
+                        )} */}
                         {isAdmin && (
                             <Link
                                 className='bg-emerald-700 hover:bg-emerald-600 text-white px-3 py-1 rounded-md font-medium

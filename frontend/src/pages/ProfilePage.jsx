@@ -23,37 +23,42 @@ const ProfilePage = () => {
   const [postCount, setPostCount] = useState(0);
   const [commentCount, setCommentCount] = useState(0);
 
+
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null);
+  const [uploadMessage, setUploadMessage] = useState("");
+
   useEffect(() => {
     const fetchUserProfile = async () => {
-        try {
-            const response = await axios.get("/auth/profile", { withCredentials: true });
-            setUser(response.data);
-            setUsername(response.data.name);
-            const userId = response.data._id;
+      try {
+        const response = await axios.get("/auth/profile", { withCredentials: true });
+        setUser(response.data);
+        setUsername(response.data.name);
+        const userId = response.data._id;
 
-            if (response.data.lastOnline) {
-                const timeAgo = formatDistanceToNow(new Date(response.data.lastOnline), { addSuffix: true });
-                setLastOnline(timeAgo.includes("less than a minute") ? "Online" : timeAgo);
-            }
-
-            if (userId) {
-                const [postCountResponse, commentCountResponse] = await Promise.all([
-                    axios.get(`/user/${userId}/post-count`, { withCredentials: true }),
-                    axios.get(`/user/${userId}/comment-count`, { withCredentials: true }),
-                ]);
-
-                setPostCount(postCountResponse.data.postCount || 0);
-                setCommentCount(commentCountResponse.data.commentCount || 0);
-            }
-        } catch (err) {
-            setError(err.response?.data?.message || err.message);
-        } finally {
-            setIsLoading(false);
+        if (response.data.lastOnline) {
+          const timeAgo = formatDistanceToNow(new Date(response.data.lastOnline), { addSuffix: true });
+          setLastOnline(timeAgo.includes("less than a minute") ? "Online" : timeAgo);
         }
+
+        if (userId) {
+          const [postCountResponse, commentCountResponse] = await Promise.all([
+            axios.get(`/user/${userId}/post-count`, { withCredentials: true }),
+            axios.get(`/user/${userId}/comment-count`, { withCredentials: true }),
+          ]);
+
+          setPostCount(postCountResponse.data.postCount || 0);
+          setCommentCount(commentCountResponse.data.commentCount || 0);
+        }
+      } catch (err) {
+        setError(err.response?.data?.message || err.message);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     fetchUserProfile();
-}, []);
+  }, []);
 
 
   // Handler for updating the profile (username only)
@@ -71,6 +76,38 @@ const ProfilePage = () => {
       setUpdateMessage(err.response?.data?.message || "Failed to update profile");
     }
   };
+  //pfp
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewImage(reader.result); // Base64 preview
+        setSelectedFile(reader.result); // Base64 to send
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  const handleUpload = async () => {
+    if (!selectedFile) {
+      setUploadMessage("Please select an image first.");
+      return;
+    }
+
+    try {
+      const response = await axios.post("/user/update-pfp", { pfp: selectedFile }, {
+        headers: { Authorization: `Bearer ${user.token}` },
+        withCredentials: true
+      });
+
+      setUser((prevUser) => ({ ...prevUser, pfp: response.data.pfp })); // Update profile picture in UI
+      setUploadMessage("Profile picture updated successfully!");
+    } catch (error) {
+      setUploadMessage("Failed to upload image.");
+      console.error(error);
+    }
+  };
+
 
   // Handler for changing the password
   const handleChangePassword = async (e) => {
@@ -150,8 +187,10 @@ const ProfilePage = () => {
                   className="bg-blue-500 text-white py-2 px-4 rounded"
                   type="button"
                   onClick={() => setIsEditing(true)}
+
                 >
                   Edit
+
                 </button>
                 {isEditing && (
                   <button
@@ -176,6 +215,28 @@ const ProfilePage = () => {
               src={user.pfp}
               alt="User Profile Picture"
             />
+            {isEditing && (
+              <div className="mt-4">
+                <input type="file" accept="image/*" onChange={handleFileChange} className="mt-2 text-white" />
+                <button onClick={handleUpload} className="bg-green-500 text-white py-2 px-4 rounded mt-2">Upload</button>
+              </div>
+            )}
+            {uploadMessage && <p className="text-green-400 mt-2">{uploadMessage}</p>}
+            {/* Upload File Input */}
+            {/* <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="mt-2 text-white"
+            /> */}
+
+            {/* Upload Button */}
+            {/* <button
+              onClick={handleUpload}
+              className="bg-blue-500 text-white py-2 px-4 rounded mt-2"
+            >
+              Upload New Picture
+            </button> */}
 
             {/* Activity Status Row */}
             <div className="w-2/3 flex justify-center bg-gray-700 p-4 rounded-lg shadow-lg text-white text-sm">
