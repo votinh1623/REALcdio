@@ -1,6 +1,4 @@
 ```
-npm i express dotenv mongoose jsonwebtoken stripe cloudinary cookie-parser bcryptjs ioredis date-fns
-npm run build
-npm run start
-
+npm i express dotenv mongoose jsonwebtoken stripe cloudinary cookie-parser bcryptjs ioredis date-fns emoji-picker
+npm run dev
 ```
