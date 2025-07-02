@@ -109,13 +109,13 @@ const Navbar = () => {
                             <Home className='inline-block mr-1 group-hover:text-emerald-400' size={20} />
                             <span className='hidden sm:inline'>Home</span>
                         </Link>
-                        <Link
+                        {/* <Link
                             to={"/all-games"}
                             className='text-gray-300 hover:text-emerald-400 transition duration-300 ease-in-out flex items-center'
                         >
                             <Grid className='inline-block mr-1 group-hover:text-emerald-400' size={20} />
                             <span className='hidden sm:inline'>Categories</span>
-                        </Link>
+                        </Link> */}
                        
                         {user && (
                             <Link

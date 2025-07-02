@@ -8,7 +8,7 @@ import { ThumbsDown, ThumbsUp } from "lucide-react";
 import UserProfileModal from "../components/UserProfileModal";
 import toast from "react-hot-toast";
 import CommentsForm from "../components/CommentsForm";
-
+import AnimatedBackground from "../components/AnimatedBackground";
 const PostDetailsPage = () => {
     const { postId } = useParams();
     const { fetchPostById, post, loading, deletePost, fetchCommentsByPostId, comments, deleteComment, likeComment, dislikeComment } = usePostCommunity();
@@ -129,6 +129,7 @@ const PostDetailsPage = () => {
     };
     return (
         <div className='min-h-screen'>
+            <AnimatedBackground />
             <div className='max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-16 max-w-full'>
                 <h1 className='text-4xl font-bold text-emerald-400 mb-2'>{post.head}</h1>
                 <p className='text-sm text-gray-500 mb-8'>By {post.userId.name} - {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}</p>

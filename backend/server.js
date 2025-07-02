@@ -16,7 +16,7 @@ import notificationRoutes from "./routes/notification.route.js";
 import Game from "./models/game.model.js";
 import User from "./models/user.model.js";
 import { connectDB } from "./lib/db.js";
-
+import '../database/syncScheduler.js';
 dotenv.config();
 
 const app = express();
@@ -26,19 +26,6 @@ const __dirname = path.resolve();
 
 app.use(express.json({ limit: "10mb" })); // allows you to parse the body of the request
 app.use(cookieParser());
-//  
-// const updateLastOnline = async () => {
-//     try {
-//         const result = await User.updateMany(
-//             { lastOnline: { $exists: false } }, // Only update users without lastOnline
-//             { $set: { lastOnline: new Date() } }
-//         );
-
-//         console.log(`✅ Updated ${result.modifiedCount} users with lastOnline.`);
-//     } catch (error) {
-//         console.error("❌ Error updating lastOnline:", error.message);
-//     }
-// };
 connectDB().then(() => {
     console.log("MongoDB connected successfully");
 	//await updateLastOnline();

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useUserStore } from "../stores/useUserStore";
 import { Link } from "react-router-dom";
-
+import AnimatedBackground from "../components/AnimatedBackground";
 const CommunityPage = () => {
     const { user } = useUserStore();
     const [posts, setPosts] = useState([]);
@@ -105,6 +105,7 @@ const CommunityPage = () => {
 
     return (
         <div className='container mx-auto p-4 max-w-full sm:p-6'>
+            <AnimatedBackground />
             <div className='mb-4 sm:ml-12 sm:mr-12 ml-4 mr-4'>
                 <div className='flex flex-wrap items-center justify-between'>
                     <h1 className='text-5xl font-bold mb-4'>Welcome to our community!</h1>
@@ -152,7 +153,7 @@ const CommunityPage = () => {
                     </div>
                 </div>
             </div>
-            <div className='bg-gray-900 p-6 rounded-lg shadow-lg'>
+            <div className='p-6 rounded-lg shadow-lg'>
                 <div className='flex justify-between items-center mb-4 ml-24 mr-24 border border-emerald-400 p-4 rounded-lg'>
                     <h1 className='text-3xl font-bold ml-8'>Community Posts</h1>
 

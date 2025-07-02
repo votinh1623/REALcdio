@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { UserPlus, Mail, Lock, User, ArrowRight, Loader } from "lucide-react";
 import { motion } from "framer-motion";
 import { useUserStore } from "../stores/useUserStore";
-
+import AnimatedBackground from "../components/AnimatedBackground";
 const SignUpPage = () => {
 	const [formData, setFormData] = useState({
 		fullName: "",
@@ -22,6 +22,7 @@ const SignUpPage = () => {
 
 	return (
 		<div className='flex flex-col justify-center py-12 sm:px-6 lg:px-8'>
+			<AnimatedBackground />
 			<motion.div
 				className='sm:mx-auto sm:w-full sm:max-w-md'
 				initial={{ opacity: 0, y: -20 }}
