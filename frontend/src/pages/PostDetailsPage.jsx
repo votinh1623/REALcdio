@@ -17,7 +17,7 @@ const PostDetailsPage = () => {
     const [selectedUserId, setSelectedUserId] = useState(null);
     const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
     const { likePost, dislikePost } = usePostCommunity();
-
+    
     useEffect(() => {
         //checkAuth();
         fetchPostById(postId);

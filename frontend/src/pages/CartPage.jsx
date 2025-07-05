@@ -6,7 +6,7 @@ import CartItem from "../components/CartItem";
 import PeopleAlsoBought from "../components/PeopleAlsoBought";
 import OrderSummary from "../components/OrderSummary";
 import GiftCouponCard from "../components/GiftCouponCard";
-import AnimatedBackground from "../components/AnimatedBackground"; // Assuming you have an animated background component
+import AnimatedBackground from "../components/AnimatedBackground"; 
 const CartPage = () => {
 	const { cart } = useCartStore();
 
