@@ -3,8 +3,10 @@ import { MongoClient } from 'mongodb';
 import dotenv from 'dotenv';
 dotenv.config();
 import { isUsingBackup } from '../backend/lib/db.js';
-const primaryUri = 'mongodb+srv://vnthienloi03:xsM5ydb5gP3Wu2RT@sontungmtp.vfjzp.mongodb.net/user_db?retryWrites=true&w=majority&appName=sontungmtp';
-const backupUri = 'mongodb+srv://vnthienloi03:UTlMVRyqkI9VqlLf@backup.4mvudmi.mongodb.net/?retryWrites=true&w=majority&appName=backup';
+
+// Use environment variables for URIs
+const primaryUri = process.env.MONGO_URI;
+const backupUri = process.env.BACKUP_MONGO_URI;
 
 export async function syncCollections() {
   const sourceUri = isUsingBackup ? backupUri : primaryUri;
