@@ -21,7 +21,7 @@ import CreatePostForm from "./components/CreatePostForm";
 import CommunityPage from "./pages/CommunityPage";
 import PostDetailsPage from "./pages/PostDetailsPage";
 import AnimatedBackground from "./components/AnimatedBackground";  
-
+import CategoryPage from "./pages/CategoryPage";
 function App() {
 	const { user, checkAuth, checkingAuth } = useUserStore();
 	const { getCartItems } = useCartStore();
@@ -54,6 +54,7 @@ function App() {
 						path='/secret-dashboard'
 						element={user?.role === "admin" ? <AdminPage /> : <Navigate to='/login' />}
 					/>
+					 <Route path='/category/:category' element={<CategoryPage />} />
 					<Route path='/product/:productId' element={<ProductDetailsPage />} />
 					<Route path='/cart' element={user ? <CartPage /> : <Navigate to='/login' />} />
 					<Route path='/purchase-success' element={user ? <PurchaseSuccessPage /> : <Navigate to='/login' />} />

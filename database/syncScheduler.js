@@ -1,4 +1,5 @@
 // database/syncScheduler.js
+// import { syncCollections } from '../sync_databases.js'; // npm run dev
 import { syncCollections } from './sync_databases.js';
 
 const SYNC_INTERVAL_MS = 100 * 60 * 1000; // 10 minutes
@@ -6,11 +7,11 @@ const SYNC_INTERVAL_MS = 100 * 60 * 1000; // 10 minutes
 // Function to schedule automatic syncing
 function startAutoSync() {
   console.log(`[${new Date().toISOString()}] Auto-sync scheduler started`);
-  syncCollections(); // run once immediately
+  //syncCollections(); // run once immediately
 
   setInterval(() => {
     console.log(`[${new Date().toISOString()}] Running scheduled sync...`);
-    syncCollections();
+   // syncCollections();
   }, SYNC_INTERVAL_MS);
 }
 

@@ -5,20 +5,13 @@ import FeaturedProducts from "../components/FeaturedProducts";
 import AnimatedBackground from "../components/AnimatedBackground";
 
 const categories = [
-    // { href: "/jeans", name: "Jeans", imageUrl: "/jeans.jpg" },
-    // { href: "/t-shirts", name: "T-shirts", imageUrl: "/tshirts.jpg" },
-    // { href: "/shoes", name: "Shoes", imageUrl: "/shoes.jpg" },
-    // { href: "/glasses", name: "Glasses", imageUrl: "/glasses.png" },
-    // { href: "/jackets", name: "Jackets", imageUrl: "/jackets.jpg" },
-    // { href: "/suits", name: "Suits", imageUrl: "/suits.jpg" },
-    // { href: "/bags", name: "Bags", imageUrl: "/bags.jpg" },
-    { href: "/action", name: "Action", imageUrl: "/action-games.jpg" },
-    { href: "/adventure", name: "Adventure", imageUrl: "/adventure-games.jpg" },
-    { href: "/rpg", name: "RPG", imageUrl: "/rpg-games.webp" },
-    { href: "/indie", name: "Indie", imageUrl: "/indie-games.avif" },
-    { href: "/rhythm", name: "Rhythm", imageUrl: "/rhythm-games.jpg" },
-    { href: "/strategy", name: "Strategy", imageUrl: "/strategy-games.jpg" },
-    { href: "/puzzle", name: "Puzzle", imageUrl: "/puzzle-games.avif" },
+    { href: "/category/action", name: "Action", imageUrl: "/action-games.jpg" },
+    { href: "/category/adventure", name: "Adventure", imageUrl: "/adventure-games.jpg" },
+    { href: "/category/rpg", name: "RPG", imageUrl: "/rpg-games.webp" },
+    { href: "/category/indie", name: "Indie", imageUrl: "/indie-games.avif" },
+    { href: "/category/rhythm", name: "Rhythm", imageUrl: "/rhythm-games.jpg" },
+    { href: "/category/strategy", name: "Strategy", imageUrl: "/strategy-games.jpg" },
+    { href: "/category/puzzle", name: "Puzzle", imageUrl: "/puzzle-games.avif" },
 ];
 
 const HomePage = () => {
@@ -27,6 +20,9 @@ const HomePage = () => {
     useEffect(() => {
         fetchFeaturedProducts();
     }, [fetchFeaturedProducts]);
+
+    // Ensure products is always an array to avoid .length error
+    const safeProducts = Array.isArray(products) ? products : [];
 
     return (
         <div className='relative min-h-screen'>
@@ -50,10 +46,9 @@ const HomePage = () => {
                     ))}
                 </div>
 
-                {!isLoading && products.length > 0 && <FeaturedProducts featuredProducts={products} />}
+                {!isLoading && safeProducts.length > 0 && <FeaturedProducts featuredProducts={safeProducts} />}
             </div>
         </div>
     );
 };
-
 export default HomePage;
