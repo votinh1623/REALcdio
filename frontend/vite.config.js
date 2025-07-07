@@ -18,9 +18,9 @@ export default defineConfig({
 			},
 		},
 		// This will disable host check — required for some Ngrok subdomains
-		hmr: {
-			clientPort: 443, // required for HTTPS tunnels like ngrok
-		},
+		// hmr: {
+		// 	clientPort: 443, // required for HTTPS tunnels like ngrok
+		// },
 		strictPort: true, // useful to avoid port auto-switching
 	},
 });

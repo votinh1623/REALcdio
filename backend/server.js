@@ -1,3 +1,5 @@
+import http from "http";
+import { Server as SocketIOServer } from "socket.io";
 import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
@@ -27,6 +29,39 @@ import '../database/syncScheduler.js';
 dotenv.config();
 
 const app = express();
+const server = http.createServer(app); // Wrap express in HTTP server
+
+const io = new SocketIOServer(server, {
+  cors: {
+    origin: "http://localhost:5173", // ✅ this is your frontend (Vite)
+    credentials: true,
+  },
+});
+// ✅ Register real-time logic here
+
+io.on("connection", (socket) => {
+	console.log("Client connected:", socket.id);
+
+	socket.on("joinPost", (postId) => {
+		socket.join(postId);
+		console.log(`User ${socket.id} joined post room: ${postId}`);
+	});
+
+	socket.on("leavePost", (postId) => {
+		socket.leave(postId);
+		console.log(`User ${socket.id} left post room: ${postId}`);
+	});
+	socket.on("deleteComment", (commentId) => {
+		io.emit("deleteComment", commentId);
+	});
+
+	socket.on("disconnect", () => {
+		console.log("Client disconnected:", socket.id);
+	});
+});
+
+app.set("io", io);
+
 const PORT = process.env.PORT || 5000;
 const __dirname = path.resolve();
 const numCPUs = Math.max(1, Math.floor(os.cpus().length / 2));
@@ -66,10 +101,10 @@ app.get('/products', async (req, res) => {
 	}
 });
 connectDB().then(() => {
-    console.log(`MongoDB connected`);
-    app.listen(PORT, () => {
-        console.log(`Server running at http://localhost:${PORT}`);
-    });
+	console.log(`MongoDB connected`);
+	server.listen(PORT, () => {
+		console.log(`Server running at http://localhost:${PORT}`);
+	});
 });
 // // Cluster Setup
 // if (cluster.isPrimary) {

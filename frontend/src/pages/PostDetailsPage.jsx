@@ -9,21 +9,71 @@ import UserProfileModal from "../components/UserProfileModal";
 import toast from "react-hot-toast";
 import CommentsForm from "../components/CommentsForm";
 import AnimatedBackground from "../components/AnimatedBackground";
+import { shallow } from "zustand/shallow";
+import { useRef } from "react";
 const PostDetailsPage = () => {
+    let renderCount = useRef(0);
+    renderCount.current++;
+    console.log(` PostDetailsPage rendered ${renderCount.current} times`);
     const { postId } = useParams();
-    const { fetchPostById, post, loading, deletePost, fetchCommentsByPostId, comments, deleteComment, likeComment, dislikeComment } = usePostCommunity();
-    const { user, checkAuth } = useUserStore();
+    const {
+        fetchPostById,
+        fetchCommentsByPostId,
+        subscribeToPostComments,
+        unsubscribeFromPostComments,
+        post,
+        comments,
+        loading,
+        deletePost,
+        deleteComment,
+        likeComment,
+        dislikeComment,
+        likePost,
+        dislikePost,
+    } = usePostCommunity(
+        (state) => ({
+            fetchPostById: state.fetchPostById,
+            fetchCommentsByPostId: state.fetchCommentsByPostId,
+            subscribeToPostComments: state.subscribeToPostComments,
+            unsubscribeFromPostComments: state.unsubscribeFromPostComments,
+            post: state.post,
+            comments: state.comments,
+            loading: state.loading,
+            deletePost: state.deletePost,
+            deleteComment: state.deleteComment,
+            likeComment: state.likeComment,
+            dislikeComment: state.dislikeComment,
+            likePost: state.likePost,
+            dislikePost: state.dislikePost,
+        }),
+        shallow // ✅ critical to prevent over-rerenders
+    );
+    const { user } = useUserStore(); // checkAuth
     const navigate = useNavigate();
     const [selectedUserId, setSelectedUserId] = useState(null);
     const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
-    const { likePost, dislikePost } = usePostCommunity();
-    
+
     useEffect(() => {
         //checkAuth();
         fetchPostById(postId);
         fetchCommentsByPostId(postId);
-    }, [checkAuth, fetchPostById, fetchCommentsByPostId, postId]);
+        subscribeToPostComments(postId);
+        return () => {
+            unsubscribeFromPostComments(postId);
+        };
+    }, [postId]);
+    useEffect(() => {
+        const unsubscribe = usePostCommunity.subscribe(
+            (state) => state, // subscribes to the whole store
+            (newState, prevState) => {
+                console.log("🔁 Zustand state changed");
+                console.log("Prev:", prevState);
+                console.log("New:", newState);
+            }
+        );
 
+        return () => unsubscribe();
+    }, []);
     if (loading) {
         return <div>Loading...</div>;
     }
@@ -53,7 +103,7 @@ const PostDetailsPage = () => {
         }
     };
     const handleDeleteComment = async (commentId) => {
-        console.log("User Info:", user); 
+        console.log("User Info:", user);
         if (!user || (user.role !== "admin" && user._id !== post.userId._id)) {
             toast.error("You are not authorized to delete this comment");
             return;
@@ -71,7 +121,7 @@ const PostDetailsPage = () => {
         } catch (error) {
             console.error("Failed to like comment:", error);
         }
-        window.location.reload();
+        // window.location.reload();
     };
 
     const handleDislikeComment = async (commentId) => {
@@ -80,7 +130,7 @@ const PostDetailsPage = () => {
         } catch (error) {
             console.error("Failed to dislike comment:", error);
         }
-        window.location.reload();
+        // window.location.reload();
     };
     const LikesDislikes = ({ commentId, likeCount, dislikeCount, onLike, onDislike }) => {
         return (
@@ -114,7 +164,7 @@ const PostDetailsPage = () => {
             console.error("Failed to like post:", error);
         }
     };
-    
+
     const handleDislikePost = async () => {
         if (!user) {
             toast.error("You must be logged in to dislike posts.");
@@ -147,22 +197,22 @@ const PostDetailsPage = () => {
                     Description:
                 </div>
                 <div className="flex items-center space-x-4 mt-4">
-    <button
-        onClick={handleLikePost}
-        className="flex items-center space-x-2 text-green-500 hover:text-green-400"
-    >
-        <ThumbsUp />
-        <span>{post.likes?.length || 0}</span>
-    </button>
+                    <button
+                        onClick={handleLikePost}
+                        className="flex items-center space-x-2 text-green-500 hover:text-green-400"
+                    >
+                        <ThumbsUp />
+                        <span>{post.likes?.length || 0}</span>
+                    </button>
 
-    <button
-        onClick={handleDislikePost}
-        className="flex items-center space-x-2 text-red-500 hover:text-red-400"
-    >
-        <ThumbsDown />
-        <span>{post.dislikes?.length || 0}</span>
-    </button>
-</div>
+                    <button
+                        onClick={handleDislikePost}
+                        className="flex items-center space-x-2 text-red-500 hover:text-red-400"
+                    >
+                        <ThumbsDown />
+                        <span>{post.dislikes?.length || 0}</span>
+                    </button>
+                </div>
                 <p className='text-lg text-gray-300 whitespace-pre-line'>{post.body}</p>
                 {user && user._id === post.userId._id && (
                     <div className='mt-8'>
@@ -201,7 +251,7 @@ const PostDetailsPage = () => {
 
                                 {/* Likes, Dislikes & Delete Button */}
                                 <div className="flex items-center space-x-4">
-                                {(user && (user.role === "admin" || user._id === comment.userId._id)) && (
+                                    {(user && (user.role === "admin" || user._id === comment.userId._id)) && (
                                         <button
                                             onClick={() => handleDeleteComment(comment._id)}
                                             className='text-red-500 hover:text-red-700'
@@ -217,12 +267,13 @@ const PostDetailsPage = () => {
                                         onDislike={handleDislikeComment}
                                     />
                                 </div>
-                                {selectedUserId && (
-                                    <UserProfileModal userId={selectedUserId} onClose={() => setSelectedUserId(null)} />
-                                )}
+
                             </div>
 
                         ))}
+                        {selectedUserId && (
+                            <UserProfileModal userId={selectedUserId} onClose={() => setSelectedUserId(null)} />
+                        )}
                     </div>
                 </div>
             </div>

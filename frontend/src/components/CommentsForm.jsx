@@ -6,6 +6,7 @@ import { usePostCommunity } from "./Community/usePostCommunity";
 import toast from "react-hot-toast";
 import TextareaAutosize from "react-textarea-autosize";
 import EmojiPicker from "emoji-picker-react";
+import { useEffect } from "react";
 
 const CommentsForm = () => {
     const { postId } = useParams();
@@ -13,7 +14,9 @@ const CommentsForm = () => {
     const { createComment } = usePostCommunity();
     const [content, setContent] = useState("");
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-
+    useEffect(() => {
+        console.log("CommentsForm mounted");
+    }, []);
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!user) {
@@ -24,6 +27,7 @@ const CommentsForm = () => {
             await createComment({ postId, content });
             setContent("");
             //   toast.success("Comment added successfully");
+            console.log("Submitted comment");
         } catch (error) {
             toast.error("Failed to add comment");
         }
@@ -31,6 +35,7 @@ const CommentsForm = () => {
     const handleEmojiClick = (emojiData) => {
         setContent((prevContent) => prevContent + emojiData.emoji);
         setShowEmojiPicker(false); // Hide emoji picker after selection
+
     };
 
     return (

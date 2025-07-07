@@ -1,8 +1,23 @@
 import { create } from "zustand";
 import toast from "react-hot-toast";
 import axios from "../../lib/axios";
+import { useEffect, useState } from "react";
+import io from "socket.io-client";
+console.log("Connecting to Socket.IO at:", import.meta.env.VITE_BACKEND_URL);
 
-export const usePostCommunity = create((set) => ({
+const socket = io(import.meta.env.VITE_BACKEND_URL, {
+    withCredentials: true,
+    transports: ['websocket'],
+    secure: false,
+});
+socket.on("connect", () => {
+    console.log("✅ Connected to socket:", socket.id);
+});
+socket.on("disconnect", () => {
+    console.log("❌ Disconnected");
+});
+export const usePostCommunity = create((set, get) => ({
+
     posts: [],
     post: null,
     comments: [],
@@ -96,55 +111,42 @@ export const usePostCommunity = create((set) => ({
         }
     },
     createComment: async (commentData) => {
-        set({ loading: true });
         try {
             const res = await axios.post("/comments", commentData);
-            set((prevState) => ({
-                comments: [res.data, ...prevState.comments],
-                loading: false,
-            }));
-            window.location.reload();
-            toast.success("Comment added successfully");
+            toast.success("Comment added");
+            // No need to call set() here because new comment comes via socket
         } catch (error) {
-            toast.error(error.response.data.error || "Failed to add comment");
-            set({ loading: false });
+            toast.error(error.response?.data?.error || "Failed to add comment");
         }
     },
+
     fetchCommentsByPostId: async (postId) => {
-        set({ loading: true });
         try {
             const response = await axios.get(`/comments/${postId}`);
-            set({ comments: response.data, loading: false });
+            const current = get().comments;
+
+            const isSame = JSON.stringify(current) === JSON.stringify(response.data);
+            if (!isSame) {
+                set({ comments: response.data });
+            }
         } catch (error) {
-            set({ loading: false });
-            toast.error(error.response.data.error || "Failed to fetch comments");
+            toast.error(error.response?.data?.error || "Failed to fetch comments");
         }
     },
     deleteComment: async (commentId, token) => {
         set({ loading: true });
         try {
             await axios.delete(`/comments/${commentId}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
+                headers: { Authorization: `Bearer ${token}` },
             });
-            set((prevState) => ({
-                comments: prevState.comments.filter((comment) => comment._id !== commentId),
+            socket.emit("deleteComment", commentId); // 🔴 Emit deletion
+            set((state) => ({
+                comments: state.comments.filter((c) => c._id !== commentId),
                 loading: false,
             }));
-            toast.success("Comment deleted successfully");
+            toast.success("Comment deleted");
         } catch (error) {
             toast.error(error.response?.data?.message || "Failed to delete comment");
-            set({ loading: false });
-        }
-    },
-    fetchCommentsByPostId: async (postId) => {
-        set({ loading: true });
-        try {
-            const response = await axios.get(`/comments/${postId}`);
-            set({ comments: response.data, loading: false });
-        } catch (error) {
-            toast.error(error.response.data.error || "Failed to fetch comments");
             set({ loading: false });
         }
     },
@@ -172,24 +174,7 @@ export const usePostCommunity = create((set) => ({
             toast.error(error.response.data.error || "Failed to dislike comment");
         }
     },
-    // refreshData: async () => {
-    //     set({ loading: true });
-    //     try {
-    //         const [postsResponse, commentsResponse] = await Promise.all([
-    //             axios.get("/posts"),
-    //             axios.get("/comments"),
-    //         ]);
-    //         set({
-    //             posts: postsResponse.data,
-    //             comments: commentsResponse.data,
-    //             loading: false,
-    //         });
-    //     } catch (error) {
-    //         set({ loading: false });
-    //         toast.error("Failed to refresh data");
-    //     }
-    // },
-     likePost : async (postId, token) => {
+    likePost: async (postId, token) => {
         try {
             await axios.post(`/posts/${postId}/like`, {}, {
                 headers: { Authorization: `Bearer ${token}` },
@@ -200,8 +185,8 @@ export const usePostCommunity = create((set) => ({
             console.error(error);
         }
     },
-    
-    dislikePost : async (postId, token) => {
+
+    dislikePost: async (postId, token) => {
         try {
             await axios.post(`/posts/${postId}/dislike`, {}, {
                 headers: { Authorization: `Bearer ${token}` },
@@ -212,4 +197,35 @@ export const usePostCommunity = create((set) => ({
             console.error(error);
         }
     },
+    subscribeToPostComments: (postId) => {
+        socket.emit("joinPost", postId);
+
+        socket.off("newComment");
+        socket.on("newComment", (newComment) => {
+            try {
+                console.log("🟢 received new comment:", newComment);
+                const currentComments = get().comments;
+                const alreadyExists = currentComments.some((c) => c._id === newComment._id);
+                if (!alreadyExists) {
+                    set({ comments: [newComment, ...currentComments] });
+                }
+            } catch (err) {
+                console.error("🔥 Error during socket newComment update", err);
+            }
+        });
+
+        socket.off("deleteComment");
+        socket.on("deleteComment", (commentId) => {
+            set((state) => ({
+                comments: state.comments.filter((c) => c._id !== commentId),
+            }));
+        });
+    },
+
+    unsubscribeFromPostComments: (postId) => {
+        socket.emit("leavePost", postId);
+        socket.off("newComment");
+        socket.off("deleteComment");
+    },
+
 }));

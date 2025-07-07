@@ -8,6 +8,11 @@ export const createComment = async (req, res) => {
         const userId = req.user._id;
 
         const newComment = await Comment.create({ postId, userId, content });
+        const populatedComment = await newComment.populate("userId", "name pfp");
+
+        // Emit new comment event via socket.io
+        const io = req.app.get("io");
+        io.to(postId).emit("newComment", populatedComment);
         const post = await Post.findById(postId).populate("userId");
         if (post && post.userId._id.toString() !== userId.toString()) {
             // Save the notification in the database
@@ -19,12 +24,14 @@ export const createComment = async (req, res) => {
                 isRead: false, // Mark as unread
             });
         }
-        res.status(201).json(newComment);
+        res.status(201).json(populatedComment);
+        console.log("✅ Emitting comment to room:", postId);
         await Post.findByIdAndUpdate(postId, { latestComment: content }, { new: true });
     } catch (error) {
         console.error("Error creating comment:", error.message);
         res.status(500).json({ message: "Server error", error: error.message });
     }
+    
 };
 
 
