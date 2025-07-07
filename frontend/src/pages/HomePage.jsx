@@ -5,13 +5,13 @@ import FeaturedProducts from "../components/FeaturedProducts";
 import AnimatedBackground from "../components/AnimatedBackground";
 
 const categories = [
-    { href: "/category/action", name: "Action", imageUrl: "/action-games.jpg" },
-    { href: "/category/adventure", name: "Adventure", imageUrl: "/adventure-games.jpg" },
-    { href: "/category/rpg", name: "RPG", imageUrl: "/rpg-games.webp" },
-    { href: "/category/indie", name: "Indie", imageUrl: "/indie-games.avif" },
-    { href: "/category/rhythm", name: "Rhythm", imageUrl: "/rhythm-games.jpg" },
-    { href: "/category/strategy", name: "Strategy", imageUrl: "/strategy-games.jpg" },
-    { href: "/category/puzzle", name: "Puzzle", imageUrl: "/puzzle-games.avif" },
+    { href: "/action", name: "Action", imageUrl: "/action-games.jpg" },
+    { href: "/adventure", name: "Adventure", imageUrl: "/adventure-games.jpg" },
+    { href: "/rpg", name: "RPG", imageUrl: "/rpg-games.webp" },
+    { href: "/indie", name: "Indie", imageUrl: "/indie-games.avif" },
+    { href: "/rhythm", name: "Rhythm", imageUrl: "/rhythm-games.jpg" },
+    { href: "/strategy", name: "Strategy", imageUrl: "/strategy-games.jpg" },
+    { href: "/puzzle", name: "Puzzle", imageUrl: "/puzzle-games.avif" },
 ];
 
 const HomePage = () => {

@@ -7,12 +7,16 @@ import ProductCard from "../components/ProductCard";
 const CategoryPage = () => {
 	const { fetchProductsByCategory, products } = useProductStore();
 
-	const { category } = useParams();
+	// const { category } = useParams();
+	const { categoryName } = useParams();
 
 	useEffect(() => {
-		fetchProductsByCategory(category);
-	}, [fetchProductsByCategory, category]);
+		fetchProductsByCategory(categoryName);
+	}, [fetchProductsByCategory, categoryName]);
 
+	<h1>
+		{categoryName.charAt(0).toUpperCase() + categoryName.slice(1)}
+	</h1>
 	console.log("products:", products);
 	return (
 		<div className='min-h-screen'>
@@ -23,7 +27,7 @@ const CategoryPage = () => {
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ duration: 0.8 }}
 				>
-					{category.charAt(0).toUpperCase() + category.slice(1)}
+					 {categoryName.charAt(0).toUpperCase() + categoryName.slice(1)}
 				</motion.h1>
 
 				<motion.div
