@@ -31,7 +31,7 @@ export const createComment = async (req, res) => {
         console.error("Error creating comment:", error.message);
         res.status(500).json({ message: "Server error", error: error.message });
     }
-    
+
 };
 
 
@@ -54,30 +54,25 @@ export const likeComment = async (req, res) => {
     try {
         const { commentId } = req.params;
         const userId = req.user._id;
-
         const comment = await Comment.findById(commentId);
-
-        if (!comment) {
-            return res.status(404).json({ message: "Comment not found" });
-        }
+        if (!comment) return res.status(404).json({ message: "Comment not found" });
 
         if (comment.likes.includes(userId)) {
-            // If user already liked the comment, remove the like
             comment.likes.pull(userId);
             comment.like -= 1;
         } else {
-            // If user disliked the comment, remove the dislike
             if (comment.dislikes.includes(userId)) {
                 comment.dislikes.pull(userId);
                 comment.dislike -= 1;
             }
-            // Add the like
             comment.likes.push(userId);
             comment.like += 1;
         }
 
         await comment.save();
-        res.json(comment);
+        const populated = await comment.populate("userId", "name pfp");
+        req.app.get("io").to(comment.postId.toString()).emit("updateCommentReaction", populated); // ✅ emit updated comment
+        res.json(populated);
     } catch (error) {
         console.error("Error liking comment:", error.message);
         res.status(500).json({ message: "Server error", error: error.message });
@@ -91,34 +86,29 @@ export const dislikeComment = async (req, res) => {
         const userId = req.user._id;
 
         const comment = await Comment.findById(commentId);
-
-        if (!comment) {
-            return res.status(404).json({ message: "Comment not found" });
-        }
+        if (!comment) return res.status(404).json({ message: "Comment not found" });
 
         if (comment.dislikes.includes(userId)) {
-            // If user already disliked the comment, remove the dislike
             comment.dislikes.pull(userId);
             comment.dislike -= 1;
         } else {
-            // If user liked the comment, remove the like
             if (comment.likes.includes(userId)) {
                 comment.likes.pull(userId);
                 comment.like -= 1;
             }
-            // Add the dislike
             comment.dislikes.push(userId);
             comment.dislike += 1;
         }
 
         await comment.save();
-        res.json(comment);
+        const populated = await comment.populate("userId", "name pfp");
+        req.app.get("io").to(comment.postId.toString()).emit("updateCommentReaction", populated); // ✅ emit updated comment
+        res.json(populated);
     } catch (error) {
         console.error("Error disliking comment:", error.message);
         res.status(500).json({ message: "Server error", error: error.message });
     }
 };
-
 // Delete a comment
 export const deleteComment = async (req, res) => {
     try {

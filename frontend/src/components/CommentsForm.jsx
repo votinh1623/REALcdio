@@ -51,6 +51,12 @@ const CommentsForm = () => {
                 <TextareaAutosize
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter" && !e.shiftKey) {
+                            e.preventDefault(); // Prevent newline
+                            handleSubmit(e);    // Submit the comment
+                        }
+                    }}
                     minRows={1}
                     className="w-full bg-gray-700 border border-gray-600 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                     placeholder="Write a comment..."

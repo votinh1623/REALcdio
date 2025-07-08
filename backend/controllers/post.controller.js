@@ -37,11 +37,36 @@ export const createPost = async (req, res) => {
 // Get all posts
 export const getAllPosts = async (req, res) => {
     try {
-        const posts = await Post.find()
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 5;
+        const skip = (page - 1) * limit;
+        const search = req.query.search || "";
+
+        const query = {};
+
+        if (search) {
+            query.$or = [
+                { head: { $regex: search, $options: "i" } },
+                { body: { $regex: search, $options: "i" } },
+                { theme: { $regex: search, $options: "i" } },
+            ];
+        }
+
+        const posts = await Post.find(query)
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit)
             .populate("userId", "name")
-            .populate("relatedGame", "gameName")
-            .populate({ path: 'commentsCount' });
-        res.status(200).json(posts);
+            .populate("relatedGame", "gameName");
+
+        const total = await Post.countDocuments(query);
+
+        res.status(200).json({
+            total,
+            page,
+            totalPages: Math.ceil(total / limit),
+            posts,
+        });
     } catch (error) {
         console.error("Error in getAllPosts controller:", error.message);
         res.status(500).json({ message: "Server error", error: error.message });

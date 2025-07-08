@@ -139,7 +139,7 @@ export const usePostCommunity = create((set, get) => ({
             await axios.delete(`/comments/${commentId}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
-            socket.emit("deleteComment", commentId); // 🔴 Emit deletion
+            socket.emit("deleteComment", commentId); //Emit deletion
             set((state) => ({
                 comments: state.comments.filter((c) => c._id !== commentId),
                 loading: false,
@@ -220,12 +220,25 @@ export const usePostCommunity = create((set, get) => ({
                 comments: state.comments.filter((c) => c._id !== commentId),
             }));
         });
+
+        // this block to handle real-time like/dislike updates
+        socket.off("updateCommentReaction");
+        socket.on("updateCommentReaction", (updatedComment) => {
+            console.log("🔁 received updateCommentReaction:", updatedComment);
+            set((state) => ({
+                comments: state.comments.map((c) =>
+                    c._id === updatedComment._id ? updatedComment : c
+                ),
+            }));
+        });
     },
+
 
     unsubscribeFromPostComments: (postId) => {
         socket.emit("leavePost", postId);
         socket.off("newComment");
         socket.off("deleteComment");
+        socket.off("updateCommentReaction"); 
     },
 
 }));

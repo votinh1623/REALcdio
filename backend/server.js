@@ -33,7 +33,7 @@ const server = http.createServer(app); // Wrap express in HTTP server
 
 const io = new SocketIOServer(server, {
   cors: {
-    origin: "http://localhost:5173", // ✅ this is your frontend (Vite)
+    origin: "*", // ✅ this is your frontend (Vite)
     credentials: true,
   },
 });
@@ -46,7 +46,6 @@ io.on("connection", (socket) => {
 		socket.join(postId);
 		console.log(`User ${socket.id} joined post room: ${postId}`);
 	});
-
 	socket.on("leavePost", (postId) => {
 		socket.leave(postId);
 		console.log(`User ${socket.id} left post room: ${postId}`);

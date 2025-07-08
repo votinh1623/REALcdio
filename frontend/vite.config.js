@@ -1,13 +1,17 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-
 // https://vitejs.dev/config/
 export default defineConfig({
 	plugins: [react()],
 	server: {
 		host: true,
 		port: 5173,
-		allowedHosts: "*",
+		cors: true,
+		strictPort: true,
+		fs: {
+			strict: false, 
+		},
+		// allowedHosts: "*",
 		proxy: {
 			"/api": {
 				// target: "http://backend:5000", // Uncomment this line for Docker setup
@@ -21,6 +25,5 @@ export default defineConfig({
 		// hmr: {
 		// 	clientPort: 443, // required for HTTPS tunnels like ngrok
 		// },
-		strictPort: true, // useful to avoid port auto-switching
 	},
 });
