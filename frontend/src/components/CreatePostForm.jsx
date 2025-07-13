@@ -18,29 +18,47 @@ const CreatePostForm = () => {
         body: "",
         image: "",
     });
-    const {createPost, loading} = usePostCommunity();
+    const { createPost, loading } = usePostCommunity();
 
     const handleSubmit = async (e) => {
-		e.preventDefault();
-		try {
-			await createPost(newPost);
-			setNewPost({ theme: "", relatedGame: "",head: "", body: "", image: "" });
-		} catch {
-			console.log("error creating a product");
-		}
-	};
+        e.preventDefault();
+
+        const tempId = Date.now();
+        const optimisticPost = {
+            ...newPost,
+            id: tempId,
+            status: 'pending',
+            user: { name: user.name, id: user._id }, // optional
+        };
+
+        // 1️⃣ Optimistically show post in UI
+        // You can call a Zustand action or a callback prop to add this to the UI
+        // Example: optimisticAddPost(optimisticPost)
+
+        try {
+            // 2️⃣ Try to create post (this will fail silently if offline with background sync)
+            await createPost(newPost);
+
+            // 3️⃣ You may update status if necessary or let fetch on next load take care of it
+            // Example: markPostAsSynced(tempId)
+            setNewPost({ theme: "", relatedGame: "", head: "", body: "", image: "" });
+
+        } catch (err) {
+            console.warn("Post creation failed (possibly offline); queued for sync.");
+        }
+    };
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
-		if (file) {
-			const reader = new FileReader();
+        if (file) {
+            const reader = new FileReader();
 
-			reader.onloadend = () => {
-				setNewPost({ ...newPost, image: reader.result });
-			};
+            reader.onloadend = () => {
+                setNewPost({ ...newPost, image: reader.result });
+            };
 
-			reader.readAsDataURL(file); // base64
-		}
+            reader.readAsDataURL(file); // base64
+        }
     };
 
     return (

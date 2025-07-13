@@ -4,9 +4,9 @@
 	"version": "0.0.0",
 	"type": "module",
 	"scripts": {
+		"build": "vite build && npm run build:sw",
+		"build:sw": "npx workbox generateSW workbox-config.cjs",
 		"dev": "vite",
-		"build": "vite build",
-		"lint": "eslint .",
 		"preview": "vite preview"
 	},
 	"dependencies": {

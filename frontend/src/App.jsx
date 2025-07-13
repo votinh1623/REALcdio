@@ -65,7 +65,6 @@ function App() {
 					<Route path='/post/:postId' element={<PostDetailsPage />} />
 				</Routes>
 			</div>
-
 			<Toaster />
 		</div>
 	);

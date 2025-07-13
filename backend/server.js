@@ -25,7 +25,6 @@ import { connectDB } from "./lib/db.js";
 import '../database/syncScheduler.js';
 
 
-
 dotenv.config();
 
 const app = express();
